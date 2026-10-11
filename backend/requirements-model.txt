@@ -1,0 +1,4 @@
+# Only needed for DETECTOR_MODE=model or hybrid (local fine-tuned model)
+torch
+transformers>=4.40
+safetensors

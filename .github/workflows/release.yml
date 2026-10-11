@@ -1,0 +1,28 @@
+name: Release extension
+
+# Runs when you push a tag like v0.1.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+      - run: npm run package
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: extension/*.vsix
+          generate_release_notes: true

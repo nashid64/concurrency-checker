@@ -1,0 +1,2118 @@
+uid,source,group,label4,code,label_bin
+jul_CWE609_Double_Checked_Locking__Servlet_01_bad,juliet,CWE609_Double_Checked_Locking,concurrency_issue," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+private static String string = null;
+
+public static String helper() 
+    { 
+        if (string == null)
+        {
+            synchronized(Sample.class)
+            {
+                if (string == null)
+                {
+                    string = ""string"";
+                }
+            }
+        }
+        return string;
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        response.getWriter().write(helper());
+    }
+}",1
+jul_CWE609_Double_Checked_Locking__Servlet_01_good1,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+private volatile static String string = null;
+
+public static String helper() 
+    { 
+        if (string == null)
+        {
+            synchronized(Sample.class)
+            {
+                if (string == null)
+                {
+                    string = ""string"";
+                }
+            }
+        }
+        return string;
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        response.getWriter().write(helper());
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Servlet_01_good2,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+private static String string = null;
+
+public synchronized static String helper()  
+    { 
+        if (string == null)
+        {
+            string = ""string"";
+        }
+        return string;
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        response.getWriter().write(helper());
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Servlet_01_good3,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+private static String string = null;
+
+public static String helper() 
+    { 
+         
+        synchronized(CWE609_Double_Checked_Locking__Thread_01.class) 
+        { 
+            if (string == null)
+            {
+                string = ""string"";
+            }
+            return string;
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        response.getWriter().write(helper());
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Servlet_01_good4,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+private static String string = null;
+
+static private final Object stringLock = new Object();
+
+public static String helper() 
+    { 
+         
+        synchronized(stringLock) 
+        { 
+            if (string == null)
+            {
+                string = ""string"";
+            }
+            return string;
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        response.getWriter().write(helper());
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Servlet_01_good5,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+private static String string = null;
+
+static private final ReentrantLock ReentrantLock = new ReentrantLock();
+
+public static String helper() 
+    { 
+        ReentrantLock.lock();  
+         
+        try 
+        { 
+            if (string == null)
+            {
+                string = ""string"";
+            }
+            return string;
+        } 
+        finally 
+        {
+            ReentrantLock.unlock();
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        response.getWriter().write(helper());
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Thread_01_bad,juliet,CWE609_Double_Checked_Locking,concurrency_issue," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+private static String string = null;
+
+public static String helper() 
+    { 
+        if (string == null)
+        {
+            synchronized(Sample.class)
+            {
+                if (string == null)
+                {
+                    string = ""string"";
+                }
+            }
+        }
+        return string;
+    }
+
+public void testCase() throws InterruptedException
+    { 
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+         
+        threadOne.start();
+        threadTwo.start();
+        
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",1
+jul_CWE609_Double_Checked_Locking__Thread_01_good1,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+private volatile static String string = null;
+
+public static String helper() 
+    { 
+        if (string == null)
+        {
+            synchronized(Sample.class)
+            {
+                if (string == null)
+                {
+                    string = ""string"";
+                }
+            }
+        }
+        return string;
+    }
+
+public void testCase() throws InterruptedException
+    { 
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+         
+        threadOne.start();
+        threadTwo.start();
+        
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Thread_01_good2,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+private static String string = null;
+
+public synchronized static String helper()  
+    { 
+        if (string == null)
+        {
+            string = ""string"";
+        }
+        return string;
+    }
+
+public void testCase() throws InterruptedException
+    { 
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+    
+     
+    threadOne.start();
+    threadTwo.start();
+    
+     
+    threadOne.join();
+    threadTwo.join();
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Thread_01_good3,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+private static String string = null;
+
+public static String helper() 
+    { 
+         
+        synchronized(Sample.class) 
+        { 
+            if (string == null)
+            {
+                string = ""string"";
+            }
+      
+        return string;
+        }
+    }
+
+public void testCase() throws InterruptedException
+    { 
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+    
+         
+        threadOne.start();
+        threadTwo.start();
+        
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Thread_01_good4,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+private static String string = null;
+
+static private final Object stringLock = new Object();
+
+public static String helper() 
+    { 
+         
+        synchronized(stringLock) 
+        { 
+            if (string == null)
+            {
+                string = ""string"";
+            }
+          return string;
+        }
+    }
+
+public void testCase() throws InterruptedException
+    { 
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+         
+        threadOne.start();
+        threadTwo.start();
+        
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",0
+jul_CWE609_Double_Checked_Locking__Thread_01_good5,juliet,CWE609_Double_Checked_Locking,safe," 
+
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+private static String string = null;
+
+static private final ReentrantLock ReentrantLock = new ReentrantLock();
+
+public static String helper() 
+    { 
+        ReentrantLock.lock();  
+        
+         
+        try 
+        { 
+            if (string == null)
+            {
+                string = ""string"";
+            }
+            return string;
+        } 
+        finally 
+        {
+            ReentrantLock.unlock();
+        }
+    }
+
+public void testCase() throws InterruptedException
+    { 
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                IO.writeLine(Sample.helper()); 
+            }
+        });
+        
+         
+        threadOne.start();
+        threadTwo.start();
+        
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",0
+jul_CWE667_Improper_Locking__basic_01_bad,juliet,CWE667_Improper_Locking,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int intNumber = 3;
+
+static private final ReentrantLock _REENTRANT_LOCK = new ReentrantLock();
+
+static public void helper()
+    {
+        _REENTRANT_LOCK.lock();
+        
+        intNumber++;
+        
+        IO.writeLine(intNumber);
+        
+         
+    }
+
+public void testCase() throws Throwable 
+    {
+        helper();
+    }
+}",1
+jul_CWE667_Improper_Locking__basic_01_good1,juliet,CWE667_Improper_Locking,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int intNumber = 3;
+
+static private final ReentrantLock _REENTRANT_LOCK = new ReentrantLock();
+
+static public void helper()
+    {
+        _REENTRANT_LOCK.lock();
+        
+        try
+        {
+            intNumber++;
+            
+            IO.writeLine(intNumber);
+        }
+        finally
+        {
+             
+            _REENTRANT_LOCK.unlock();
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+        helper();
+    }
+}",0
+jul_CWE764_Multiple_Locks__ReentrantLock_Servlet_01_bad,juliet,CWE764_Multiple_Locks,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock(); 
+        REENTRANT_LOCK_.lock();  
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        helper();
+        response.getWriter().write(int);
+    }
+}",1
+jul_CWE764_Multiple_Locks__ReentrantLock_Servlet_01_good1,juliet,CWE764_Multiple_Locks,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock();  
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();
+        }
+    }
+
+private void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable
+    {        
+        helper();
+        response.getWriter().write(int);
+    }
+}",0
+jul_CWE764_Multiple_Locks__ReentrantLock_Thread_01_bad,juliet,CWE764_Multiple_Locks,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock(); 
+        REENTRANT_LOCK_.lock();  
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+       
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(int);  
+    }
+}",1
+jul_CWE764_Multiple_Locks__ReentrantLock_Thread_01_good1,juliet,CWE764_Multiple_Locks,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock();  
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();
+        }
+    }
+
+private void testCase() throws InterruptedException
+    {        
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(int);
+    }
+}",0
+jul_CWE765_Multiple_Unlocks__ReentrantLock_Servlet_01_bad,juliet,CWE765_Multiple_Unlocks,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock(); 
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock(); 
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        helper();
+        response.getWriter().write(int);
+    }
+}",1
+jul_CWE765_Multiple_Unlocks__ReentrantLock_Servlet_01_good1,juliet,CWE765_Multiple_Unlocks,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock(); 
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+private void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable
+    {        
+        helper();
+        response.getWriter().write(int);
+    }
+}",0
+jul_CWE765_Multiple_Unlocks__ReentrantLock_Thread_01_bad,juliet,CWE765_Multiple_Unlocks,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock(); 
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();    
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(int);  
+    }
+}",1
+jul_CWE765_Multiple_Unlocks__ReentrantLock_Thread_01_good1,juliet,CWE765_Multiple_Unlocks,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock(); 
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+private void testCase() throws InterruptedException
+    {        
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(int);
+    }
+}",0
+jul_CWE832_Unlock_Not_Locked__ReentrantLock_Servlet_01_bad,juliet,CWE832_Unlock_Not_Locked,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper()  
+    {
+         
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+        helper();
+        response.getWriter().write(int);
+    }
+}",1
+jul_CWE832_Unlock_Not_Locked__ReentrantLock_Servlet_01_good1,juliet,CWE832_Unlock_Not_Locked,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock();   
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+private void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable
+    {        
+        helper();
+        response.getWriter().write(int);
+    }
+}",0
+jul_CWE832_Unlock_Not_Locked__ReentrantLock_Thread_01_bad,juliet,CWE832_Unlock_Not_Locked,concurrency_issue," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+         
+
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(int);  
+    }
+}",1
+jul_CWE832_Unlock_Not_Locked__ReentrantLock_Thread_01_good1,juliet,CWE832_Unlock_Not_Locked,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int int = 1;
+
+static private final ReentrantLock REENTRANT_LOCK_ = new ReentrantLock();
+
+static public void helper() 
+    {
+        REENTRANT_LOCK_.lock();   
+         
+        try
+        { 
+            int = int * 2;
+        } 
+        finally 
+        {
+            REENTRANT_LOCK_.unlock();  
+        }
+    }
+
+private void testCase() throws InterruptedException
+    {        
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helper(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(int);
+    }
+}",0
+jul_CWE833_Deadlock__ReentrantLock_Servlet_01_bad,juliet,CWE833_Deadlock,deadlock," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int intNumber1 = 3;
+
+static private final ReentrantLock _NUMBER1_REENTRANTLOCK = new ReentrantLock();
+
+static private int intNumber2 = 5;
+
+static private final ReentrantLock _NUMBER2_REENTRANTLOCK = new ReentrantLock();
+
+static public void helperAdd()
+    {
+        _NUMBER1_REENTRANTLOCK.lock();
+
+           
+
+        _NUMBER2_REENTRANTLOCK.lock();
+        
+        try 
+        {
+            intNumber1 = intNumber1 + intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER2_REENTRANTLOCK.unlock();
+            _NUMBER1_REENTRANTLOCK.unlock();
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        _NUMBER2_REENTRANTLOCK.lock(); 
+
+           
+
+        _NUMBER1_REENTRANTLOCK.lock();
+        try 
+        {
+            intNumber1 = intNumber1 * intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER1_REENTRANTLOCK.unlock();
+            _NUMBER2_REENTRANTLOCK.unlock();
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+         
+        if(request.isRequestedSessionIdValid()) 
+        {
+            helperAdd();
+        } 
+        else 
+        {
+            helperMultiply();
+        }
+
+         
+        response.getWriter().write(intNumber1);
+    }
+}",1
+jul_CWE833_Deadlock__ReentrantLock_Servlet_01_good1,juliet,CWE833_Deadlock,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int intNumber1 = 3;
+
+static private final ReentrantLock _NUMBER1_REENTRANTLOCK = new ReentrantLock();
+
+static private int intNumber2 = 5;
+
+static private final ReentrantLock _NUMBER2_REENTRANTLOCK = new ReentrantLock();
+
+static public void helperAdd()
+    {
+        _NUMBER1_REENTRANTLOCK.lock();
+
+           
+
+        _NUMBER2_REENTRANTLOCK.lock();
+        try 
+        {
+            intNumber1 = intNumber1 + intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER2_REENTRANTLOCK.unlock();
+            _NUMBER1_REENTRANTLOCK.unlock();
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        _NUMBER1_REENTRANTLOCK.lock(); 
+
+           
+
+        _NUMBER2_REENTRANTLOCK.lock();
+        try 
+        {
+            intNumber1 = intNumber1 * intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER2_REENTRANTLOCK.unlock();
+            _NUMBER1_REENTRANTLOCK.unlock();
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+         
+        if(request.isRequestedSessionIdValid()) 
+        {
+            helperAdd();
+        }
+        else 
+        {
+            helperMultiply();
+        }
+
+         
+        response.getWriter().write(intNumber1);
+    }
+}",0
+jul_CWE833_Deadlock__ReentrantLock_Thread_01_bad,juliet,CWE833_Deadlock,deadlock," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import java.util.logging.Level;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int intNumber1 = 3;
+
+static private final ReentrantLock _NUMBER1_REENTRANTLOCK = new ReentrantLock();
+
+static private int intNumber2 = 5;
+
+static private final ReentrantLock _NUMBER2_REENTRANTLOCK = new ReentrantLock();
+
+static public void helperAdd()
+    {
+        _NUMBER1_REENTRANTLOCK.lock();
+        
+        try 
+        { 
+            Thread.sleep(1000);  
+        } 
+        catch (InterruptedException exceptInterrupted) 
+        {
+            IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+        }
+        
+        _NUMBER2_REENTRANTLOCK.lock();
+        
+        try 
+        {
+            intNumber1 = intNumber1 + intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER2_REENTRANTLOCK.unlock();
+            _NUMBER1_REENTRANTLOCK.unlock();
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        _NUMBER2_REENTRANTLOCK.lock(); 
+        
+        try 
+        { 
+            Thread.sleep(1000);  
+        } 
+        catch (InterruptedException exceptInterrupted) 
+        {
+            IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+        }
+        
+        _NUMBER1_REENTRANTLOCK.lock();
+        
+        try 
+        {
+            intNumber1 = intNumber1 * intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER1_REENTRANTLOCK.unlock();
+            _NUMBER2_REENTRANTLOCK.unlock();
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperAdd(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperMultiply(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(intNumber1);
+    }
+}",1
+jul_CWE833_Deadlock__ReentrantLock_Thread_01_good1,juliet,CWE833_Deadlock,safe," 
+package sample;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+import java.util.logging.Level;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int intNumber1 = 3;
+
+static private final ReentrantLock _NUMBER1_REENTRANTLOCK = new ReentrantLock();
+
+static private int intNumber2 = 5;
+
+static private final ReentrantLock _NUMBER2_REENTRANTLOCK = new ReentrantLock();
+
+static public void helperAdd()
+    {
+        _NUMBER1_REENTRANTLOCK.lock();
+        
+        try 
+        { 
+            Thread.sleep(1000);  
+        } 
+        catch (InterruptedException exceptInterrupted) 
+        {
+            IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+        }
+        
+        _NUMBER2_REENTRANTLOCK.lock();
+        
+        try 
+        {
+            intNumber1 = intNumber1 + intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER2_REENTRANTLOCK.unlock();
+            _NUMBER1_REENTRANTLOCK.unlock();
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        _NUMBER1_REENTRANTLOCK.lock(); 
+        
+        try 
+        { 
+            Thread.sleep(1000);  
+        } 
+        catch (InterruptedException exceptInterrupted) 
+        {
+            IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+        }
+        
+        _NUMBER2_REENTRANTLOCK.lock();
+        
+        try 
+        {
+            intNumber1 = intNumber1 * intNumber2;
+        } 
+        finally 
+        {
+            _NUMBER2_REENTRANTLOCK.unlock();
+            _NUMBER1_REENTRANTLOCK.unlock();
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperAdd(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperMultiply(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(intNumber1);
+    }
+}",0
+jul_CWE833_Deadlock__synchronized_Objects_Servlet_01_bad,juliet,CWE833_Deadlock,deadlock," 
+package sample;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private int intNumber1 = 3;
+
+static private final Object _NUMBER1_LOCK = new Object();
+
+static private int intNumber2 = 5;
+
+static private final Object _NUMBER2_LOCK = new Object();
+
+static public void helperAdd()
+    {
+        synchronized(_NUMBER1_LOCK) 
+        {
+               
+
+            synchronized(_NUMBER2_LOCK) 
+            {
+                intNumber1 = intNumber1 + intNumber2;
+            }
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        synchronized(_NUMBER2_LOCK) 
+        { 
+             
+
+            synchronized(_NUMBER1_LOCK) 
+            {
+                intNumber1 = intNumber1 * intNumber2;
+            }
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+     
+        if(request.isRequestedSessionIdValid()) 
+        {
+            helperAdd();
+        } 
+        else 
+        {
+            helperMultiply();
+        }
+
+         
+        response.getWriter().write(intNumber1);
+    }
+}",1
+jul_CWE833_Deadlock__synchronized_Objects_Servlet_01_good1,juliet,CWE833_Deadlock,safe," 
+package sample;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static private final Object _NUMBER1_LOCK = new Object();
+
+static private final Object _NUMBER2_LOCK = new Object();
+
+static private int intNumber1 = 3;
+
+static private int intNumber2 = 5;
+
+static public void helperAdd()
+    {
+        synchronized(_NUMBER1_LOCK) 
+        {
+               
+
+            synchronized(_NUMBER2_LOCK) 
+            {
+                intNumber1 = intNumber1 + intNumber2;
+            }
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        synchronized(_NUMBER1_LOCK) 
+        { 
+             
+
+            synchronized(_NUMBER2_LOCK) 
+            {
+                intNumber1 = intNumber1 * intNumber2;
+            }
+        }
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+         
+        if(request.isRequestedSessionIdValid()) 
+        {
+            helperAdd();
+        } 
+        else 
+        {
+            helperMultiply();
+        }
+
+         
+        response.getWriter().write(intNumber1);
+    }
+}",0
+jul_CWE833_Deadlock__synchronized_Objects_Thread_01_bad,juliet,CWE833_Deadlock,deadlock," 
+package sample;
+
+import java.util.logging.Level;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private int intNumber1 = 3;
+
+static private final Object _NUMBER1_LOCK = new Object();
+
+static private int intNumber2 = 5;
+
+static private final Object _NUMBER2_LOCK = new Object();
+
+static public void helperAdd()
+    {
+        synchronized(_NUMBER1_LOCK) 
+        {
+            try 
+            { 
+                Thread.sleep(1000);  
+            } 
+            catch (InterruptedException exceptInterrupted) 
+            {
+                IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+            }
+            
+            synchronized(_NUMBER2_LOCK) 
+            {
+                intNumber1 = intNumber1 + intNumber2;
+            }
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        synchronized(_NUMBER2_LOCK) 
+        { 
+            try 
+            { 
+                Thread.sleep(1000);  
+            } 
+            catch (InterruptedException exceptInterrupted) 
+            {
+                IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+            }
+            
+            synchronized(_NUMBER1_LOCK) 
+            {
+                intNumber1 = intNumber1 * intNumber2;
+            }
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperAdd(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperMultiply(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(intNumber1);
+    }
+}",1
+jul_CWE833_Deadlock__synchronized_Objects_Thread_01_good1,juliet,CWE833_Deadlock,safe," 
+package sample;
+
+import java.util.logging.Level;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+static private final Object _NUMBER1_LOCK = new Object();
+
+static private final Object _NUMBER2_LOCK = new Object();
+
+static private int intNumber1 = 3;
+
+static private int intNumber2 = 5;
+
+static public void helperAdd()
+    {
+        synchronized(_NUMBER1_LOCK) 
+        {
+            try 
+            { 
+                Thread.sleep(1000);  
+            } 
+            catch (InterruptedException exceptInterrupted) 
+            {
+                IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+            }
+            
+            synchronized(_NUMBER2_LOCK) 
+            {
+                intNumber1 = intNumber1 + intNumber2;
+            }
+        }
+    }
+
+static public void helperMultiply()
+    {
+         
+        synchronized(_NUMBER1_LOCK) 
+        { 
+            try 
+            { 
+                Thread.sleep(1000);  
+            } 
+            catch (InterruptedException exceptInterrupted) 
+            {
+                IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+            }
+            
+            synchronized(_NUMBER2_LOCK) 
+            {
+                intNumber1 = intNumber1 * intNumber2;
+            }
+        }
+    }
+
+public void testCase() throws Throwable 
+    {
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperAdd(); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                Sample.helperMultiply(); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+
+         
+        IO.writeLine(intNumber1);
+    }
+}",0
+jul_CWE833_Deadlock__synchronized_methods_Servlet_01_bad,juliet,CWE833_Deadlock,deadlock," 
+package sample;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.logging.Level;
+
+import testcasesupport.IO;
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static Sample objectFirst = new Sample();
+
+static Sample objectSecond = new Sample();
+
+public synchronized void helperBow(Sample bower) 
+    {
+        IO.writeLine(""helperBow"");
+        
+        try 
+        { 
+            Thread.sleep(1000);  
+        } 
+        catch (InterruptedException exceptInterrupted) 
+        {
+            IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+        }
+        
+         
+        bower.helperBowBack(this); 
+    }
+
+public synchronized void helperBowBack(Sample bower) 
+    {
+        IO.writeLine(""helperBowBack"");
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+         
+        if(request.isRequestedSessionIdValid()) 
+        {
+            objectFirst.helperBow(objectSecond);
+        } 
+        else 
+        {
+            objectSecond.helperBow(objectFirst);
+        }
+    }
+}",1
+jul_CWE833_Deadlock__synchronized_methods_Servlet_01_good1,juliet,CWE833_Deadlock,safe," 
+package sample;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.logging.Level;
+
+import testcasesupport.IO;
+import testcasesupport.AbstractTestCaseServlet;
+
+public class Sample extends AbstractTestCaseServlet 
+{
+private static final long serialVersionUID = 1L;
+
+static Sample objectFirst = new Sample();
+
+static Sample objectSecond = new Sample();
+
+public void helperBow(Sample bower) {
+        synchronized(this) 
+        {
+            IO.writeLine(""helperBow"");
+        
+            try 
+            { 
+                Thread.sleep(1000);  
+            } 
+            catch (InterruptedException exceptInterrupted) 
+            {
+                IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+            }
+        }
+        
+         
+        bower.helperBowBack(this); 
+    }
+
+public synchronized void helperBowBack(Sample bower) 
+    {
+        IO.writeLine(""helperBowBack"");
+    }
+
+public void testCase(HttpServletRequest request, HttpServletResponse response) throws Throwable 
+    {
+         
+        if(request.isRequestedSessionIdValid()) 
+        {
+            objectFirst.helperBow(objectSecond);
+        } 
+        else 
+        {
+            objectSecond.helperBow(objectFirst);
+        }
+    }
+}",0
+jul_CWE833_Deadlock__synchronized_methods_Thread_01_bad,juliet,CWE833_Deadlock,deadlock," 
+package sample;
+
+import java.util.logging.Level;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+public synchronized void helperBow(Sample bower) 
+    {
+        IO.writeLine(""helperBow"");
+    
+        try 
+        { 
+            Thread.sleep(1000);  
+        } 
+        catch (InterruptedException exceptInterrupted) 
+        {
+            IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+        }
+            
+        bower.helperBowBack(this);  
+    }
+
+public synchronized void helperBowBack(Sample bower) 
+    {
+        IO.writeLine(""helperBowBack"");
+    }
+
+public void testCase() throws InterruptedException 
+    {
+         
+        final Sample FINAL_THREAD_ONE = new Sample();
+        final Sample FINAL_THREAD_TWO = new Sample();
+
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                FINAL_THREAD_ONE.helperBow(FINAL_THREAD_TWO); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                FINAL_THREAD_TWO.helperBow(FINAL_THREAD_ONE); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+          
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",1
+jul_CWE833_Deadlock__synchronized_methods_Thread_01_good1,juliet,CWE833_Deadlock,safe," 
+package sample;
+
+import java.util.logging.Level;
+
+import testcasesupport.AbstractTestCase;
+import testcasesupport.IO;
+
+public class Sample extends AbstractTestCase 
+{
+public void helperBow(Sample bower) 
+    {
+        synchronized(this) 
+        {
+            IO.writeLine(""helperBow"");
+            
+            try 
+            { 
+                Thread.sleep(1000);  
+            } 
+            catch (InterruptedException exceptInterrupted) 
+            {
+                IO.logger.log(Level.WARNING, ""Sleep Interrupted"", exceptInterrupted);
+            }
+        }
+        
+        bower.helperBowBack(this);  
+    }
+
+public synchronized void helperBowBack(Sample bower) 
+    {
+        IO.writeLine(""helperBowBack"");
+    }
+
+private void testCase()  throws InterruptedException 
+    {
+         
+        final Sample FINAL_THREAD_ONE = new Sample();
+        final Sample FINAL_THREAD_TWO = new Sample();
+
+         
+        Thread threadOne = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                FINAL_THREAD_ONE.helperBow(FINAL_THREAD_TWO); 
+            }
+        });
+        
+        Thread threadTwo = new Thread(new Runnable() 
+        {
+            public void run() 
+            { 
+                FINAL_THREAD_TWO.helperBow(FINAL_THREAD_ONE); 
+            }
+        });
+
+         
+        threadOne.start();
+        threadTwo.start();
+
+         
+        threadOne.join();
+        threadTwo.join();
+    }
+}",0

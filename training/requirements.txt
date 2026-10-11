@@ -1,0 +1,5 @@
+# torch is already installed on Google Colab. On your own PC install it first from https://pytorch.org
+transformers>=4.40
+scikit-learn
+pandas
+matplotlib

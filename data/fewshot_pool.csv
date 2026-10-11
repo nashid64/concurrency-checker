@@ -1,0 +1,372 @@
+uid,source,group,code,label_bin
+syn_0005,synthetic,cc_visibility,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Bank {
+    static final AtomicInteger ops = new AtomicInteger();
+    static boolean running = true;
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void process() {
+        long spin = 0;
+        while (running) {
+            spin++;
+        }
+        System.out.println(""stopped"");
+    }
+
+    static void transfer() {
+        pause(50);
+        running = false;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                process();
+            }
+        });
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                transfer();
+            }
+        });
+        t0.start();
+        t1.start();
+        t0.join();
+        t1.join();
+    }
+}
+",1
+syn_0011,synthetic,cc_lock_leak,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Bank {
+    static final AtomicInteger ops = new AtomicInteger();
+    static final ReentrantLock dbLock = new ReentrantLock();
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void reader() {
+        dbLock.lock();
+        if (ops.get() >= 0) {
+            throw new IllegalStateException(""failed"");
+        }
+        System.out.println(""working"");
+        dbLock.unlock();
+    }
+
+    static void handler() {
+        pause(50);
+        dbLock.lock();
+        try {
+            System.out.println(""working"");
+        } finally {
+            dbLock.unlock();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t0 = new Thread(Bank::reader);
+        Thread t1 = new Thread(Bank::handler);
+        t0.start();
+        t1.start();
+        t0.join();
+        t1.join();
+    }
+}
+",1
+syn_0025,synthetic,dl_three_locks,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Program {
+    static final AtomicInteger ops = new AtomicInteger();
+    static final Object dbLock = new Object();
+    static final Object cacheLock = new Object();
+    static final Object lkX = new Object();
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void doWork() {
+        synchronized (dbLock) {
+            pause(100);
+            synchronized (cacheLock) {
+                Thread.yield();
+            }
+        }
+    }
+
+    static void handler() {
+        synchronized (cacheLock) {
+            pause(100);
+            synchronized (lkX) {
+                Thread.yield();
+            }
+        }
+    }
+
+    static void worker() {
+        synchronized (lkX) {
+            pause(100);
+            synchronized (dbLock) {
+                Thread.yield();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t0 = new Thread(Program::doWork);
+        Thread t1 = new Thread(Program::handler);
+        Thread t2 = new Thread(Program::worker);
+        t0.start();
+        t1.start();
+        t2.start();
+        t0.join();
+        t1.join();
+        t2.join();
+    }
+}
+",1
+syn_0030,synthetic,dl_pool_starvation,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Main {
+    static final AtomicInteger ops = new AtomicInteger();
+    static final ExecutorService pool = Executors.newFixedThreadPool(1);
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static Integer submitJob() throws Exception {
+        Future<Integer> inner = pool.submit((Callable<Integer>) () -> {
+            ops.incrementAndGet();
+            return 1;
+        });
+        return inner.get();
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<Future<Integer>> futures = new ArrayList<>();
+        for (int i = 0; i < 1; i++) {
+            futures.add(pool.submit((Callable<Integer>) () -> submitJob()));
+        }
+        for (Future<Integer> fu : futures) {
+            fu.get();
+        }
+        pool.shutdown();
+    }
+}
+",1
+syn_0008,synthetic,race_counter,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Main {
+    static final AtomicInteger ops = new AtomicInteger();
+    static int balance = 0;
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void doWork() {
+        for (int i = 0; i < 10000; i++) {
+            balance += 1;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t0 = new Thread(Main::doWork);
+        Thread t1 = new Thread(Main::doWork);
+        Thread t2 = new Thread(Main::doWork);
+        Thread t3 = new Thread(Main::doWork);
+        Thread t4 = new Thread(Main::doWork);
+        t0.start();
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+        t0.join();
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        System.out.println(balance);
+    }
+}
+",1
+syn_0012,synthetic,race_check_then_act,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Main {
+    static final AtomicInteger ops = new AtomicInteger();
+    static int quota = 14;
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void reader() {
+        if (quota >= 10) {
+            pause(10);
+            quota -= 10;
+        }
+    }
+
+    static void runJob() {
+        if (quota >= 10) {
+            pause(10);
+            quota -= 10;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                reader();
+            }
+        });
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runJob();
+            }
+        });
+        t0.start();
+        t1.start();
+        t0.join();
+        t1.join();
+        System.out.println(quota);
+    }
+}
+",1
+syn_0096,synthetic,safe_check_then_act,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Simulation {
+    static final AtomicInteger ops = new AtomicInteger();
+    static int balance = 19;
+    static final Object fileLock = new Object();
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static void doWork() {
+        synchronized (fileLock) {
+            if (balance >= 10) {
+                pause(10);
+                balance -= 10;
+            }
+        }
+    }
+
+    static void process() {
+        synchronized (fileLock) {
+            if (balance >= 10) {
+                pause(10);
+                balance -= 10;
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t0 = new Thread(() -> doWork());
+        Thread t1 = new Thread(() -> process());
+        t0.start();
+        t1.start();
+        t0.join();
+        t1.join();
+        System.out.println(balance);
+    }
+}
+",0
+syn_0003,synthetic,safe_pool_sized,"import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+
+public class Simulation {
+    static final AtomicInteger ops = new AtomicInteger();
+    static final ExecutorService pool = Executors.newFixedThreadPool(4);
+
+    static void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    static Integer outer() throws Exception {
+        Future<Integer> inner = pool.submit((Callable<Integer>) () -> {
+            ops.incrementAndGet();
+            return 1;
+        });
+        return inner.get();
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<Future<Integer>> futures = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            futures.add(pool.submit((Callable<Integer>) () -> outer()));
+        }
+        for (Future<Integer> fu : futures) {
+            fu.get();
+        }
+        pool.shutdown();
+    }
+}
+",0

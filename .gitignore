@@ -1,0 +1,25 @@
+# secrets
+.env
+*.env
+!.env.example
+
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# node / extension
+node_modules/
+extension/out/
+*.vsix
+
+# big or generated files
+backend/models/*
+!backend/models/.gitkeep
+training/out/
+training/reports/
+results/
+graphs/
+*.jsonl

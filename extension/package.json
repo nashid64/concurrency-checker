@@ -1,0 +1,105 @@
+{
+  "name": "concurrency-checker",
+  "displayName": "Concurrency Checker",
+  "description": "Finds concurrency bugs (race conditions, deadlocks, thread-safety problems) in Java code using an AI backend.",
+  "version": "0.1.0",
+  "publisher": "nashid64",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nashid64/concurrency-checker.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Linters", "Programming Languages"],
+  "keywords": ["java", "concurrency", "deadlock", "race condition", "thread safety"],
+  "activationEvents": ["onLanguage:java"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "concurrencyChecker.analyzeFile",
+        "title": "Concurrency Checker: Analyze Current File",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "concurrencyChecker.clear",
+        "title": "Concurrency Checker: Clear Results"
+      },
+      {
+        "command": "concurrencyChecker.checkBackend",
+        "title": "Concurrency Checker: Check Backend Connection"
+      },
+      {
+        "command": "concurrencyChecker.showOutput",
+        "title": "Concurrency Checker: Show Log"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "concurrencyChecker.analyzeFile",
+          "when": "resourceLangId == java",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "concurrencyChecker.analyzeFile",
+          "when": "resourceLangId == java",
+          "group": "navigation@9"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Concurrency Checker",
+      "properties": {
+        "concurrencyChecker.backendUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8000",
+          "description": "Base URL of the Concurrency Checker backend (no trailing slash)."
+        },
+        "concurrencyChecker.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Optional. Sent as header X-API-Key (needed only if the backend sets API_KEY)."
+        },
+        "concurrencyChecker.detectorMode": {
+          "type": "string",
+          "enum": ["server-default", "mock", "llm", "model", "hybrid"],
+          "default": "server-default",
+          "description": "Which detector the backend should use. 'server-default' = whatever DETECTOR_MODE is set to on the backend."
+        },
+        "concurrencyChecker.analyzeOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Analyze Java files automatically when saved."
+        },
+        "concurrencyChecker.timeoutSeconds": {
+          "type": "number",
+          "default": 90,
+          "description": "How long to wait for the backend before giving up."
+        },
+        "concurrencyChecker.maxFileChars": {
+          "type": "number",
+          "default": 60000,
+          "description": "Files longer than this many characters are not sent."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test",
+    "package": "vsce package --no-dependencies",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.4.0"
+  }
+}
