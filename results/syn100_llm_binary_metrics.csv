@@ -1,0 +1,2 @@
+accuracy,precision,recall,f1,mcc,false_positive_rate,TP,FP,TN,FN
+0.88,0.8620689655172413,1.0,0.9259259259259259,0.6695340634119862,0.48,75,12,13,0

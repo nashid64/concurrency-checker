@@ -1,0 +1,7 @@
+group,mean,count
+CWE833_Deadlock,0.5833333333333334,12
+CWE609_Double_Checked_Locking,0.9166666666666666,12
+CWE764_Multiple_Locks,1.0,4
+CWE667_Improper_Locking,1.0,2
+CWE765_Multiple_Unlocks,1.0,4
+CWE832_Unlock_Not_Locked,1.0,4

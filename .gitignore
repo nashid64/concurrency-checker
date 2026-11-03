@@ -20,8 +20,6 @@ backend/models/*
 !backend/models/.gitkeep
 training/out/
 training/reports/
-results/
-graphs/
 *.jsonl
 
 # not for git
