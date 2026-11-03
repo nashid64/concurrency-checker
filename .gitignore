@@ -23,3 +23,11 @@ training/reports/
 results/
 graphs/
 *.jsonl
+
+# not for git
+Start Server.bat
+backend/class Geeks {.java
+dist/
+build/
+*.spec
+ConcurrencyCheckerLauncher.exe
